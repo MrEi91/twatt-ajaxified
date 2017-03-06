@@ -16,15 +16,28 @@ let my_oAuth = new oAuth.OAuth(
 )
 
 module.exports = {
-  twitterRecent: function (req, res, next) {
+  twitterRecent: (req, res, next) => {
     my_oAuth.get(
       `https://api.twitter.com/1.1/statuses/user_timeline.json`,
       process.env.ACCESS_TOKEN, // test user token
       process.env.TOKEN_SECRET, // test user secret
-      function (e, data, respond) {
+      function(e, data, respond) {
         if (e) console.error(e)
         console.log(require('util').inspect(data))
         res.send(data)
+      }
+    )
+  },
+  twittPost: (req, res, next) => {
+    let tweet = req.body.status
+    my_oAuth.post(
+      `https://api.twitter.com/1.1/statuses/update.json?status=${tweet}`,
+      process.env.ACCESS_TOKEN, // test user token
+      process.env.TOKEN_SECRET, // test user secret
+      tweet,
+      'text',
+      (err, data) => {
+        err ? console.log(err) : res.send(data)
       }
     )
   }
