@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>Twatt Recent Ajaxified</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+
+  </head>
+
+  <body>
+    <!-- START SEARCH RECENT TWITTS -->
+    <div id="new-twitt" class="container">
+      <p>Twatt Recent</p>
+      <textarea class="form-control" rows="3" placeholder="what's happening?"></textarea>
+      <button type="button" class="btn btn-info pull-right" onclick=tweetNew()>Tweet</button>
+    </div>
+    <!-- END SEARCH RECENT TWITTS -->
+
+    <!-- APPEND NEW TWITTS -->
+    <div id="twits" class="container">
+
+    </div>
+    <!-- END APPEND NEW TWITTS -->
+
+    <!-- START GET & POST DATA FROM SERVER -->
+    <script>
+      // START GET TWITTS
+      $(document).ready(
+        function() {
+          $.ajax({
+            url: 'http://localhost:3000/api/twatt/recent',
+            type: 'GET',
+            success: function(data) {
+              data = JSON.parse(data)
+              data.forEach(function(twatts) {
+                $('#twits').append(`<blockquote><p>${twatts.text}</p><footer>Another twit from <cite title="Source Title">${twatts.user.screen_name}</cite></footer></blockquote>`)
+              })
+            }
+          })
+        })
+      //END GET TWITTS
+
+      // START POST TWITTS
+      function tweetNew() {
+        $.ajax({
+          url: 'http://localhost:3000/api/twatt/new',
+          type: 'POST',
+          data: {
+            status: $('textarea').val()
+          },
+          success: function(twatts) {
+            let data = JSON.parse(twatts)
+            $('#twits').prepend(`<blockquote><p>${data.text}</p><footer>Another twit from <cite title="Source Title">${data.user.screen_name}</cite></footer></blockquote>`),
+              $('textarea').val('')
+          }
+        })
+      }
+      //END POST TWITTS
+    </script>
+    <!-- END GET & POST DATA FROM SERVER -->
+  </body>
+
+</html>
